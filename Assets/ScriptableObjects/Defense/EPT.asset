@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: EPT
   m_EditorClassIdentifier: 
   ItemName: EPT
-  ItemIcon: {fileID: 0}
+  ItemIcon: {fileID: 21300000, guid: 9f4855e2259126d4c987e1e54f589def, type: 3}
   ItemType: 2
   Rarity: 0
   Cost:

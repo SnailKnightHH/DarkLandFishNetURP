@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Pistol
   m_EditorClassIdentifier: 
   ItemName: Pistol
-  ItemIcon: {fileID: 0}
+  ItemIcon: {fileID: 21300000, guid: 397b72b2c7cca2240b6a9bddc7e9384a, type: 3}
   ItemType: 3
   Rarity: 0
   Cost:

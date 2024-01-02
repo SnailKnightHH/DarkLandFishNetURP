@@ -15,7 +15,7 @@ public class StorageAndCraftingUI : MonoBehaviour
     private Transform CostTemplate;
     public Transform ItemDetails;
     [SerializeField] private float templateHeight = 10;
-    [SerializeField] public float templateWidth = 80;    
+    [SerializeField] public float templateWidth = 80;
     [SerializeField] private Button RawMaterialPageBtn;
     [SerializeField] private Button GearsPageBtn;
     [SerializeField] private Button DefensePageBtn;
@@ -40,7 +40,7 @@ public class StorageAndCraftingUI : MonoBehaviour
         }
         else
         {
-            Instance = this;            
+            Instance = this;
             RawMaterialPageBtn.onClick.AddListener(() =>
             {
                 RenderPage(ItemType.RawMaterial);
@@ -61,7 +61,7 @@ public class StorageAndCraftingUI : MonoBehaviour
             {
                 RenderPage(ItemType.Parts);
             });
-            GetComponent<Canvas>().enabled = false;            
+            GetComponent<Canvas>().enabled = false;
         }
     }
 
@@ -116,16 +116,17 @@ public class StorageAndCraftingUI : MonoBehaviour
         {
             Transform newEntry = Instantiate(ItemTemplate, ItemListContainer);
             RectTransform newEntryRectTransform = newEntry.GetComponent<RectTransform>();
-            newEntryRectTransform.anchoredPosition = new Vector2(0, -templateHeight * idx);            
+            newEntryRectTransform.anchoredPosition = new Vector2(0, -templateHeight * idx);
             newEntry.Find("ItemName").GetComponent<TMP_Text>().text = item.Key.ItemName;
             newEntry.Find("Quantity").GetComponent<TMP_Text>().text = item.Value.ToString();
+            newEntry.Find("Icon").GetComponent<Image>().sprite = item.Key.ItemIcon;
             newEntry.gameObject.SetActive(true);
             // I know this is ugly...
             if (idx == 0)
             {
                 firstChildEntry = newEntry;
                 firstChildItem = item.Key;
-            }           
+            }
             idx++;
         }
 
@@ -140,13 +141,14 @@ public class StorageAndCraftingUI : MonoBehaviour
         if (itemType == ItemType.RawMaterial)
         {
             CraftBtn.gameObject.SetActive(false);
-        } else
+        }
+        else
         {
             CraftBtn.gameObject.SetActive(true);
         }
         if (firstChildItem == null) { return; }
         UpdateCostContainer(Description, CostContainer, CostTemplate, firstChildItem, templateWidth, firstChildItem.Description);
-        
+
         //var pointer = new PointerEventData(EventSystem.current);
         //if (firstChildEntry != null)
         //{
@@ -167,8 +169,8 @@ public class StorageAndCraftingUI : MonoBehaviour
         CraftBtn = ItemDetails.transform.Find("CraftBtn");
         // Make sure only one listener is subscribed 
         CraftBtn.GetComponent<Button>().onClick.RemoveAllListeners();
-        CraftBtn.GetComponent<Button>().onClick.AddListener(CraftItem); 
-        CostContainer = ItemDetails.transform.Find("CostContainer"); 
+        CraftBtn.GetComponent<Button>().onClick.AddListener(CraftItem);
+        CostContainer = ItemDetails.transform.Find("CostContainer");
         CostTemplate = ItemDetails.transform.parent.Find("CostTemplate");
         CurrentlySelectedItem = item;
     }
