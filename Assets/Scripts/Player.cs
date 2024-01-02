@@ -399,11 +399,15 @@ public class Player : Character, ITrackable
                 _verticalVelocity = -2f;
             }
 
+            _animator.SetBool("Jump", false);
+            _animator.SetBool("Grounded", true);
             // Jump
             if (_input.jump && _jumpTimeoutDelta <= 0.0f && !freezePlayerAndCameraMovement && !IsBuilding)
             {
                 // the square root of H * -2 * G = how much velocity needed to reach desired height
                 _verticalVelocity = Mathf.Sqrt(JumpHeight * -2f * Gravity);
+                _animator.SetBool("Jump", true);
+                _animator.SetBool("Grounded", false);
             }
 
             // jump timeout
