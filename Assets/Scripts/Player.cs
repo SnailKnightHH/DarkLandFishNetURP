@@ -21,7 +21,8 @@ public class Player : Character, ITrackable
         get { return _eyeTransform; }
         private set { _eyeTransform = value; }
     }
-    [field:SerializeField] public Transform cameraTransform
+    [field: SerializeField]
+    public Transform cameraTransform
     {
         get; private set;
     }
@@ -35,7 +36,7 @@ public class Player : Character, ITrackable
     [SerializeField] private Transform _defenseCarryMountPoint;
     public Transform CarryMountPoint { get { return _carryMountPoint; } }
     [SerializeField] private float sphereColliderRadius = 1f;
-    
+
     private PlayerWeaponContext weaponContext;
     [SerializeField] private Iweapon Fist;
     private IEffectDecorator effectDecorator;
@@ -64,7 +65,7 @@ public class Player : Character, ITrackable
         {
             return inventoryList;
         }
-    }    
+    }
     private int _currentlyHeldIdx = 0;
     public int CurrentlyHeldIdx
     {
@@ -77,7 +78,7 @@ public class Player : Character, ITrackable
 
     [SyncVar(Channel = FishNet.Transporting.Channel.Reliable, ReadPermissions = ReadPermission.Observers, WritePermissions = WritePermission.ServerOnly)]
     public bool Grabbed;
-   
+
     protected override int Damage { get => 20; } // not used for now, since player's damage is their weapons
 
     private AudioSource _audioSource;
@@ -118,7 +119,7 @@ public class Player : Character, ITrackable
     [Tooltip("How far in degrees can you move the camera up")]
     public float TopClamp = 90.0f;
     [Tooltip("How far in degrees can you move the camera down")]
-    public float BottomClamp = -90.0f;    
+    public float BottomClamp = -90.0f;
 
     // cinemachine
     private float _cinemachineTargetPitch;
@@ -139,6 +140,8 @@ public class Player : Character, ITrackable
 #endif
     private CharacterController _controller;
     public StarterAssetsInputs _input { get; private set; }
+
+    public Animator _animator;
 
     private bool IsCurrentDeviceMouse
     {
@@ -222,12 +225,12 @@ public class Player : Character, ITrackable
         rb = GetComponent<Rigidbody>();
         PickupPrompt.enabled = false;
         CraftingTablePrompt.enabled = false;
-        InventoryFullPrompt.enabled = false;        
+        InventoryFullPrompt.enabled = false;
         UpdateInventoryUI("Fist", "");
         isUsingCraftingTable = false;
-        inventoryList = new List<Tuple<GameObject, int>>() { Tuple.Create<GameObject, int>(null, 0), 
-            Tuple.Create<GameObject, int>(null, 0), 
-            Tuple.Create<GameObject, int>(null, 0), 
+        inventoryList = new List<Tuple<GameObject, int>>() { Tuple.Create<GameObject, int>(null, 0),
+            Tuple.Create<GameObject, int>(null, 0),
+            Tuple.Create<GameObject, int>(null, 0),
             Tuple.Create<GameObject, int>(null, 0) };
         Keyboard.current.MakeCurrent();
         IsBuilding = false;
@@ -272,10 +275,12 @@ public class Player : Character, ITrackable
         if (isWalking && isSprinting)
         {
             AudioManager.Instance.PlayAudioContinuousNetwork(NetworkObject, SoundName.Run, true, myClientId);
-        } else if (isWalking)
+        }
+        else if (isWalking)
         {
             AudioManager.Instance.PlayAudioContinuousNetwork(NetworkObject, SoundName.Walk, true, myClientId);
-        } else
+        }
+        else
         {
             AudioManager.Instance.PlayAudioContinuousNetwork(NetworkObject, SoundName.Walk, false, myClientId);
             AudioManager.Instance.PlayAudioContinuousNetwork(NetworkObject, SoundName.Run, false, myClientId);
@@ -343,6 +348,8 @@ public class Player : Character, ITrackable
             _speed = targetSpeed;
         }
 
+        _animator.SetFloat("Speed", _speed);
+
         // normalise input direction
         Vector3 inputDirection = new Vector3(_input.move.x, 0.0f, _input.move.y).normalized;
 
@@ -360,24 +367,26 @@ public class Player : Character, ITrackable
             {
                 AudioManager.Instance.PlayAudioContinuousLocal(_audioSource, SoundName.Walk, NetworkManager.ClientManager.Connection.ClientId);
             }
-        } 
+        }
 
         // move the player
         if (!freezePlayerAndCameraMovement && !IsBuilding)
         {
             _controller.Move(inputDirection.normalized * (_speed * Time.deltaTime) + new Vector3(0.0f, _verticalVelocity, 0.0f) * Time.deltaTime);
-        } else
+        }
+        else
         {
             _controller.Move(new Vector3(0.0f, _verticalVelocity, 0.0f) * Time.deltaTime);
         }
-        
+
     }
 
     private void JumpAndGravity()
     {
-        if ((freezePlayerAndCameraMovement || IsBuilding) && _input.jump) {
+        if ((freezePlayerAndCameraMovement || IsBuilding) && _input.jump)
+        {
             _input.jump = false;
-            return; 
+            return;
         }
         if (Grounded)
         {
@@ -448,7 +457,7 @@ public class Player : Character, ITrackable
         if (inventoryList[idx].Item1 != null)
         {
             UpdateInventoryUI(inventoryList[idx].Item1.GetComponent<PickupableObject>().objectItem.ItemName, inventoryList[idx].Item2.ToString());
-        }        
+        }
     }
 
     public void AddOneToInventoryList(int idx) // Todo: maybe support overload that takes gameobject as argument
@@ -457,7 +466,7 @@ public class Player : Character, ITrackable
         if (_currentlyHeldIdx == idx)
         {
             UpdateInventoryUI(inventoryList[idx].Item1.GetComponent<PickupableObject>().objectItem.ItemName, inventoryList[idx].Item2.ToString());
-        }        
+        }
     }
 
     private void MakeInventorySlotEmpty(int idx)
@@ -504,20 +513,22 @@ public class Player : Character, ITrackable
                 continue;
             }
             if (!isInventorySlotEmpty(i)
-                && inventoryList[i].Item1.GetComponent<PickupableObject>().objectItem.ItemName 
+                && inventoryList[i].Item1.GetComponent<PickupableObject>().objectItem.ItemName
                     == objectTobeHeld.GetComponent<PickupableObject>().objectItem.ItemName)
             {
                 if (inventoryList[i].Item2 + objectTobeHeld.GetComponent<PickupableObject>().NumOfItem <= ITEM_HELD_LIMIT)
                 {
                     return new int[] { i, -1 };
-                } else // consider case: [5 0], and you have 6, it needs to be [10, 1]
+                }
+                else // consider case: [5 0], and you have 6, it needs to be [10, 1]
                 {
                     halfOccupiedIdx = i;
                 }
             }
         }
-        if (halfOccupiedIdx != -1 && availableIdx == -1) { return new int[] {-1, -1}; }  // consider case: [5, 10], and you have 6 -> inventory full
-        if (halfOccupiedIdx != -1 && availableIdx != -1) {
+        if (halfOccupiedIdx != -1 && availableIdx == -1) { return new int[] { -1, -1 }; }  // consider case: [5, 10], and you have 6 -> inventory full
+        if (halfOccupiedIdx != -1 && availableIdx != -1)
+        {
             // eg. [5, 0], numOfItem = 6, 6 - (10 - 5) = 1
             return new int[] { availableIdx, halfOccupiedIdx };
         }
@@ -546,13 +557,13 @@ public class Player : Character, ITrackable
                 {
                     return new int[] { i, -1 };
                 }
-                else 
+                else
                 {
                     halfOccupiedIdx = i;
                 }
             }
         }
-        if (halfOccupiedIdx != -1 && availableIdx == -1) { return new int[] { -1, -1 }; }  
+        if (halfOccupiedIdx != -1 && availableIdx == -1) { return new int[] { -1, -1 }; }
         if (halfOccupiedIdx != -1 && availableIdx != -1)
         {
             // eg. [5, 0], numOfItem = 6, 6 - (10 - 5) = 1
@@ -603,7 +614,8 @@ public class Player : Character, ITrackable
         {
             UpdateInventoryUI(inventoryList[availableIdx].Item1.GetComponent<PickupableObject>().objectItem.ItemName,
                 inventoryList[availableIdx].Item2.ToString());
-        } else if(halfOccupiedIdx == _currentlyHeldIdx)
+        }
+        else if (halfOccupiedIdx == _currentlyHeldIdx)
         {
             UpdateInventoryUI(inventoryList[halfOccupiedIdx].Item1.GetComponent<PickupableObject>().objectItem.ItemName,
                 inventoryList[halfOccupiedIdx].Item2.ToString());
@@ -624,7 +636,7 @@ public class Player : Character, ITrackable
         {
             weaponContext.SetWeapon(inventoryList[availableIdx].Item1.GetComponent<Iweapon>(), transform);
         }
-        
+
 
     }
 
@@ -634,37 +646,38 @@ public class Player : Character, ITrackable
     {
         // unattach object
         if (isInventorySlotEmpty(_currentlyHeldIdx)) { return; }
-        
+
         if (inventoryList[_currentlyHeldIdx].Item1.GetComponent<Iweapon>() != null)
         {
             weaponContext.SetWeapon(Fist, transform);
-        }        
+        }
         if (destroyObject)
         {
             inventoryList[_currentlyHeldIdx].Item1.GetComponent<PickupableObject>().DestroyNetworkObjectServerRpc();
             UpdateInventoryUI("Fist", "");
             MakeInventorySlotEmpty(_currentlyHeldIdx);
-        } else if (inventoryList[_currentlyHeldIdx].Item1.GetComponent<Defense>() == null)  // Defenses can only be deployed and cannot be dropped off
-        {   
+        }
+        else if (inventoryList[_currentlyHeldIdx].Item1.GetComponent<Defense>() == null)  // Defenses can only be deployed and cannot be dropped off
+        {
             inventoryList[_currentlyHeldIdx].Item1.GetComponent<PickupableObject>().Dropoff(inventoryList[_currentlyHeldIdx].Item2);
             UpdateInventoryUI("Fist", "");
-            MakeInventorySlotEmpty(_currentlyHeldIdx);                        
+            MakeInventorySlotEmpty(_currentlyHeldIdx);
         }
 
-   
+
         //isCarrying = false;
     }
 
     private void ItemSwitch() // there must be a better way...
-    {   
+    {
         if (IsBuilding)
         {
             return;
         }
-        if (Keyboard.current.digit1Key.wasPressedThisFrame) 
+        if (Keyboard.current.digit1Key.wasPressedThisFrame)
         {
             SwitchItemLogic(0);
-        } 
+        }
         else if (Keyboard.current.digit2Key.wasPressedThisFrame)
         {
             SwitchItemLogic(1);
@@ -685,10 +698,11 @@ public class Player : Character, ITrackable
         {
             InventoryPrompt.transform.GetChild(0).GetComponent<TMP_Text>().text = name;
             InventoryPrompt.transform.GetChild(1).GetComponent<TMP_Text>().text = count;
-        } else
+        }
+        else
         {
             InventoryPrompt.enabled = false;
-        }        
+        }
     }
 
     private void SwitchItemLogic(int idx)
@@ -699,7 +713,8 @@ public class Player : Character, ITrackable
             if (IsServer || IsHost)
             {
                 SetMeshStatusClientRpc(inventoryList[_currentlyHeldIdx].Item1.gameObject.GetComponent<NetworkObject>(), false);
-            } else
+            }
+            else
             {
                 SetMeshStatusServerRpc(inventoryList[_currentlyHeldIdx].Item1.gameObject.GetComponent<NetworkObject>(), false);
             }
@@ -717,7 +732,8 @@ public class Player : Character, ITrackable
                 SetMeshStatusServerRpc(inventoryList[_currentlyHeldIdx].Item1.gameObject.GetComponent<NetworkObject>(), true);
             }
             UpdateInventoryUI(inventoryList[_currentlyHeldIdx].Item1.GetComponent<PickupableObject>().objectItem.ItemName, inventoryList[_currentlyHeldIdx].Item2.ToString());
-        } else
+        }
+        else
         {
             UpdateInventoryUI("Fist", "");
         }
@@ -727,7 +743,7 @@ public class Player : Character, ITrackable
     private void SetMeshStatusServerRpc(NetworkObject item, bool ifActive)
     {
         item.gameObject.GetComponent<PickupableObject>().DisableOrEnableMesh(ifActive);
-        SetMeshStatusClientRpc(item, ifActive);        
+        SetMeshStatusClientRpc(item, ifActive);
     }
 
     [ObserversRpc(BufferLast = true)]
@@ -760,7 +776,7 @@ public class Player : Character, ITrackable
     private void EquipClientWithItemTakenOutClientRpc(NetworkConnection conn, int[] availableIdices, int NumOfItemOverride, NetworkObject spawnedItemNetworkObject)
     {
         GameObject pickUpObject = spawnedItemNetworkObject.gameObject;
-        
+
         if (availableIdices != null && availableIdices[0] != -1)
         {
             pickup(pickUpObject, availableIdices, NumOfItemOverride);
@@ -781,7 +797,7 @@ public class Player : Character, ITrackable
     }
 
     private void PerformAction()
-    {        
+    {
         if (_input.attack)
         {
             _input.attack = false;
@@ -802,15 +818,16 @@ public class Player : Character, ITrackable
                     string itemName = inventoryList[_currentlyHeldIdx].Item1.GetComponent<PickupableObject>().objectItem.ItemName;
                     MakeInventorySlotEmpty(CurrentlyHeldIdx);
                     SpawnItem(itemName, _carryMountPoint.position, cameraTransform.rotation, defenseHeldNumber - 1, new int[] { _currentlyHeldIdx, -1 }); // create a new one and pick it up
-                } else
+                }
+                else
                 {
                     UpdateInventoryUI("Fist", "");
                     MakeInventorySlotEmpty(_currentlyHeldIdx);
                 }
-                
+
                 return;
             }
-            
+
             Debug.Assert(weaponContext.HasWeapon(), "Tries to attack but has no weapon");
             weaponContext.WeaponAttack();
         }
@@ -831,7 +848,7 @@ public class Player : Character, ITrackable
 
     public bool IsBuilding
     {
-        get; set;        
+        get; set;
     }
 
     private void BuildButtonReleasedAction()
@@ -919,7 +936,8 @@ public class Player : Character, ITrackable
         objectToInteract = null;
 
 #if UNITY_EDITOR
-        if (RotaryHeart.Lib.PhysicsExtension.Physics.SphereCast(cameraTransform.position, sphereColliderRadius, cameraTransform.forward, out RaycastHit hitInfo, playerInteractDistance, Physics.AllLayers, QueryTriggerInteraction.Ignore, RotaryHeart.Lib.PhysicsExtension.PreviewCondition.Both)) { 
+        if (RotaryHeart.Lib.PhysicsExtension.Physics.SphereCast(cameraTransform.position, sphereColliderRadius, cameraTransform.forward, out RaycastHit hitInfo, playerInteractDistance, Physics.AllLayers, QueryTriggerInteraction.Ignore, RotaryHeart.Lib.PhysicsExtension.PreviewCondition.Both))
+        {
 #else
         if (Physics.SphereCast(cameraTransform.position, sphereColliderRadius, cameraTransform.forward, out RaycastHit hitInfo, playerInteractDistance, Physics.AllLayers, QueryTriggerInteraction.Ignore)) { 
 #endif
@@ -929,11 +947,12 @@ public class Player : Character, ITrackable
             if (hitInfo.transform.GetComponent<Carryable>() != null)
             {
                 objectToCarry = hitInfo.transform.gameObject;
-                         
-            } else if (hitInfo.transform.root.GetComponent<Carryable>() != null)
+
+            }
+            else if (hitInfo.transform.root.GetComponent<Carryable>() != null)
             {
                 objectToCarry = hitInfo.transform.root.gameObject;
-            } 
+            }
             else
             {
                 PickupPrompt.enabled = false;
@@ -974,10 +993,11 @@ public class Player : Character, ITrackable
                 structure = objectToInteract.GetComponentInParent<Structure>();
                 if (structure != null && !structure.IsBuilt)
                 {
-                    structure.UI.canDisplay(true);                
+                    structure.UI.canDisplay(true);
                 }
-            } 
-        } else
+            }
+        }
+        else
         {
             if (structure != null)
             {
@@ -988,7 +1008,7 @@ public class Player : Character, ITrackable
             InventoryFullPrompt.enabled = false;
         }
     }
-    
+
     public void EnterEnvironmentalHazard(EnvironmentalHazardType type)
     {
         if (type == EnvironmentalHazardType.Swamp)
@@ -1011,7 +1031,8 @@ public class Player : Character, ITrackable
         if ((next as AbstractEffectDecorator).getHazardType() == type)
         {
             (cur as AbstractEffectDecorator).setEffectWrappee((next as AbstractEffectDecorator).getEffectWrappee());
-        } else if (next is AbstractEffectDecorator)
+        }
+        else if (next is AbstractEffectDecorator)
         {
             cur = next;
             next = (next as AbstractEffectDecorator).getEffectWrappee();
