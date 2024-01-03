@@ -1832,8 +1832,12 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3640609152149562834, guid: 1e792b730d7efeb40a8b34eb2ba50072, type: 3}
+      propertyPath: _scenePathHash
+      value: 584410112
+      objectReference: {fileID: 0}
+    - target: {fileID: 3640609152149562834, guid: 1e792b730d7efeb40a8b34eb2ba50072, type: 3}
       propertyPath: <SceneId>k__BackingField
-      value: 2510022320968109489
+      value: 2510022321091071210
       objectReference: {fileID: 0}
     - target: {fileID: 4294038405451736470, guid: 1e792b730d7efeb40a8b34eb2ba50072, type: 3}
       propertyPath: m_Name

@@ -1807,7 +1807,7 @@ Camera:
   m_GameObject: {fileID: 3733276059736740926}
   m_Enabled: 1
   serializedVersion: 2
-  m_ClearFlags: 2
+  m_ClearFlags: 1
   m_BackGroundColor: {r: 0.16941082, g: 0.16941082, b: 0.254717, a: 1}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
@@ -2597,8 +2597,8 @@ MonoBehaviour:
   <ParentNetworkObject>k__BackingField: {fileID: 0}
   <ChildNetworkObjects>k__BackingField: []
   SerializedTransformProperties:
-    Position: {x: 52.76999, y: -14.974121, z: 82.770004}
-    Rotation: {x: 0, y: 0, z: 0, w: 1}
+    Position: {x: 0, y: 1.5420642, z: 0}
+    Rotation: {x: 0, y: 0.16336043, z: 0, w: 0.9865665}
     LocalScale: {x: 1, y: 1, z: 1}
   _isNetworked: 1
   _isGlobal: 0
@@ -2607,7 +2607,7 @@ MonoBehaviour:
   NetworkObserver: {fileID: 0}
   <PrefabId>k__BackingField: 28
   <SpawnableCollectionId>k__BackingField: 0
-  _scenePathHash: 584410112
+  _scenePathHash: 0
   <SceneId>k__BackingField: 0
   <AssetPathHash>k__BackingField: 14972803610577229128
 --- !u!114 &3815647825141395648
