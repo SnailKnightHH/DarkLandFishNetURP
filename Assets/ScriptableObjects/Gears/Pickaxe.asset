@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Pickaxe
   m_EditorClassIdentifier: 
   ItemName: Pickaxe
-  ItemIcon: {fileID: 0}
+  ItemIcon: {fileID: 21300000, guid: 5313a4d163989fa4a8424d8e792b065f, type: 3}
   ItemType: 1
   Rarity: 0
   Cost:
