@@ -15,7 +15,6 @@ Material:
   m_InvalidKeywords:
   - _CULL_NONE
   - _USEALPHACLIPPING_ON
-  - _USEEMISSION_ON
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -47,7 +46,7 @@ Material:
     - _CelShadeMidPoint: 0.3
     - _CelShadeSoftness: 0.1
     - _Cull: 0
-    - _Cutoff: 1
+    - _Cutoff: 0.1
     - _DirectLightMultiplier: 1
     - _IndirectLightMultiplier: 0.1
     - _OutlineWidth: 0.0001

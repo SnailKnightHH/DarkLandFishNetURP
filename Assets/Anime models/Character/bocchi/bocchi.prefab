@@ -983,7 +983,6 @@ GameObject:
   - component: {fileID: 3757778724670706133}
   - component: {fileID: 1697609925783383371}
   - component: {fileID: 4008296320461857116}
-  - component: {fileID: -6508080512388297863}
   m_Layer: 0
   m_Name: bocchi
   m_TagString: Untagged
@@ -1048,7 +1047,7 @@ Animator:
   m_GameObject: {fileID: 1806171625722569432}
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: fa4587931a032474c90be2b00a075f7a, type: 2}
-  m_Controller: {fileID: 9100000, guid: 363613bb031e32646a8deaba1c1dfcb7, type: 2}
+  m_Controller: {fileID: 0}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -1270,22 +1269,6 @@ MonoBehaviour:
       m_RotationOrder: 4
     CurveXRangeDegree: 90
     CurveYRangeDegree: 10
---- !u!114 &-6508080512388297863
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1806171625722569432}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 69ea1f88e8d74e04e9341465573a4ef8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Interval: 5
-  ClosingTime: 0.06
-  OpeningSeconds: 0.03
-  CloseSeconds: 0.1
 --- !u!1 &1943642218184925560
 GameObject:
   m_ObjectHideFlags: 0

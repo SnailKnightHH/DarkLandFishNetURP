@@ -134,7 +134,7 @@ public class AudioManager : NetworkBehaviour
 #if UNITY_EDITOR
         Debug.Log(networkObject.LocalConnection.ClientId + "executed continuous sound " + soundName + " , bool: " + isPlaying);
 #endif
-        StartCoroutine(KeepPlayingSound(networkObject.GetComponentInChildren<AudioSource>(), soundName, () => keepPlayingSoundDict[clientId][soundName]));
+        StartCoroutine(KeepPlayingSound(networkObject.GetComponentInChildren<AudioSource>(), soundName, clientId, () => keepPlayingSoundDict[clientId][soundName]));
         UpdatePlayerIsPlayingSoundStatusClientRpc(isPlaying, soundName, networkObject, clientId);
     }
 
@@ -146,14 +146,19 @@ public class AudioManager : NetworkBehaviour
 #if UNITY_EDITOR
         Debug.Log(networkObject.LocalConnection.ClientId + "executed continuous sound " + soundName + " , bool: " + isPlaying);
 #endif
-        StartCoroutine(KeepPlayingSound(networkObject.GetComponentInChildren<AudioSource>(), soundName, () => keepPlayingSoundDict[clientId][soundName]));
+
+        StartCoroutine(KeepPlayingSound(networkObject.GetComponentInChildren<AudioSource>(), soundName, clientId, () => keepPlayingSoundDict[clientId][soundName]));
     }
 
-    private IEnumerator KeepPlayingSound(AudioSource audioSource, SoundName soundName, Func<bool> ifKeepPlaying)
+    // A coroutine is used instead of a plain function since otherwise this thread will just hang. Coroutine spawns a new thread, and will be automatically destroyed after coroutine function exits (I think).
+    private IEnumerator KeepPlayingSound(AudioSource audioSource, SoundName soundName, int clientId, Func<bool> ifKeepPlaying)
     {
         while (ifKeepPlaying())
         {
-            audioSource.PlayOneShot(GetRandomAudioClip(soundName));
+            if (CanPlaySound(soundName, clientId))
+            {
+                audioSource.PlayOneShot(GetRandomAudioClip(soundName));
+            }
             yield return null;
         }
     }
