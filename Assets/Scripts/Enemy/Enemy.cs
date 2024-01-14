@@ -1,3 +1,4 @@
+using FishNet.Object;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -13,6 +14,50 @@ public abstract class Enemy : Character, ITriggerCollider, ITrackable
     protected GameObject lockedPlayer;
     protected float agentStoppingDistance = 2f;
     GenericColliderDetector<Player> colliderDetector;
+
+    [SerializeField] protected List<Material> materials;
+
+    // Not using MeshRenderer since there is also skinned mesh renderer for bones 
+    protected Renderer[] meshRenderers;
+
+    /// <summary>
+    /// Change material based on material idx on materials list in Enemy.cs on all machines.
+    /// For material correspondence of the index, see specific enemy class.
+    /// </summary>
+    protected void ChangeMaterial(int materialIdx)
+    {
+        if (IsHost || IsServer)
+        {
+            changeMaterialLocal(materialIdx);
+            ChangeMaterialObserversRpc(materialIdx);
+        } else
+        {
+            ChangeMaterialServerRpc(materialIdx);
+        }
+    }
+
+    // Todo: extract this and the one in defense.cs into a common class
+    [ServerRpc(RequireOwnership = false, RunLocally = true)]
+    private void ChangeMaterialServerRpc(int materialIdx)
+    {
+        changeMaterialLocal(materialIdx);
+        ChangeMaterialObserversRpc(materialIdx);
+    }
+
+    [ObserversRpc(BufferLast = true, ExcludeServer = true)]
+    private void ChangeMaterialObserversRpc(int materialIdx)
+    {
+        changeMaterialLocal(materialIdx);
+    }
+
+    private void changeMaterialLocal(int materialIdx)
+    {
+        foreach (Renderer meshRenderer in meshRenderers)
+        {
+            meshRenderer.material = materials[materialIdx];
+        }
+    }
+
 
     [field: SerializeField] protected virtual float BaseAttackInterval
     {
@@ -42,6 +87,8 @@ public abstract class Enemy : Character, ITriggerCollider, ITrackable
         colliderDetector.OnLockedTargetChanged += () => { lockedPlayer = colliderDetector.lockedTarget; };
         initialTransform = transform;
         pathFindingDestination = initialTransform;
+        meshRenderers = GetComponentsInChildren<Renderer>();
+        
         // Weird fix for agent mesh not
         agent.stoppingDistance = agentStoppingDistance;
         agent.enabled = false;

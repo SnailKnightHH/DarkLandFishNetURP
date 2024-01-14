@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using FishNet.Object;
+using System;
 
 public class FlyingPufferFish : Enemy
 {
@@ -9,6 +10,12 @@ public class FlyingPufferFish : Enemy
     private bool grabbedPlayerReachedMaxHeight = false;
 
     protected override int Damage { get => 20; }
+    private bool grabbing = false;
+
+    // Todo: Create single source material manager?
+    // translucentMaterial idx: 0, see Enemy class for the material array
+    // attackMaterial idx: 1, see Enemy class for the material array
+    // Cannot pass Material class through network (not serialized), so use indices.
 
     protected override void Awake()
     {
@@ -19,6 +26,7 @@ public class FlyingPufferFish : Enemy
     protected override void Start()
     {
         base.Start();
+        ChangeMaterial(0);
     }
 
     // Update is called once per frame
@@ -26,6 +34,7 @@ public class FlyingPufferFish : Enemy
     {
         base.Update();
     }
+
 
     protected override void Attack()
     {
@@ -38,11 +47,25 @@ public class FlyingPufferFish : Enemy
             new Vector2(transform.position.x, transform.position.z)) <= 3f)
         {
             Player player = lockedPlayer.GetComponent<Player>();
+            player.PlayerDiedAction += PlayerDiedActionFlyingPufferFish; 
             if (!player.Grabbed)
             {
+                grabbing = true;
+                ChangeMaterial(1);
                 StartCoroutine(Grab(player));
             }
-        }            
+        } 
+        // Todo: create a delegate in player, and once killed, instead of destroy player object, maybe just disable it, and use delegate to inform enemy to update relevant logic
+        // in this case, we don't have to keep updating bool var grabbing then.
+        else if (lockedPlayer == null)
+        {
+            grabbing = false;
+        }
+    }
+
+    private void PlayerDiedActionFlyingPufferFish()
+    {
+        ChangeMaterial(0);
     }
 
     private IEnumerator Grab(Player player)
@@ -92,6 +115,12 @@ public class FlyingPufferFish : Enemy
         } 
         // Todo: Make player fall smoothly instead of appearing on the ground instantly
         base.Die();
+    }
+
+    public override void ReceiveDamage(int damage)
+    {
+        if (!grabbing) { return; }
+        base.ReceiveDamage(damage);
     }
 
     protected override void OnExitAdditionalAction(Player player)

@@ -373,6 +373,9 @@ MonoBehaviour:
   initialHealth: 100
   healthNetworkVariable: 0
   eyeTransform: {fileID: 1050528869826159816}
+  materials:
+  - {fileID: 2100000, guid: e5e05f32237c15b40b6da2c5cdc00254, type: 2}
+  - {fileID: 2100000, guid: e1a3bba992cab4f40b8058ad4bc815d9, type: 2}
   <BaseAttackInterval>k__BackingField: 2
   <EnemyType>k__BackingField: FlyingPufferFish
 --- !u!54 &-4252576105322575629
@@ -423,7 +426,7 @@ MonoBehaviour:
   <ParentNetworkObject>k__BackingField: {fileID: 0}
   <ChildNetworkObjects>k__BackingField: []
   SerializedTransformProperties:
-    Position: {x: 0, y: 0, z: 0}
+    Position: {x: 462.4, y: 101.9, z: 210.56876}
     Rotation: {x: 0, y: 0, z: 0, w: 1}
     LocalScale: {x: 1, y: 1, z: 1}
   _isNetworked: 1

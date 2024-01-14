@@ -12,6 +12,8 @@ using UnityEngine.UI;
 using static EnvironmentalHazardsManager;
 using Unity.VisualScripting;
 using static AudioManager;
+using UnityEngine.InputSystem.LowLevel;
+using UnityEngine.Windows;
 
 public class Player : Character, ITrackable
 {
@@ -212,6 +214,7 @@ public class Player : Character, ITrackable
         _input.BuildButtonReleased += BuildButtonReleasedAction;
 #if ENABLE_INPUT_SYSTEM
         _playerInput = GetComponent<PlayerInput>();
+        _input.SetCursorState(true);
 #else
 			Debug.LogError( "Starter Assets package is missing dependencies. Please use Tools/Starter Assets/Reinstall Dependencies to fix it");
 #endif
@@ -1065,6 +1068,8 @@ public class Player : Character, ITrackable
         HealthBar.fillAmount = (float)((float)curHealth / (float)initialHealth);
     }
 
+    public Action PlayerDiedAction;
+
     protected override void Die()
     {
 #if UNITY_EDITOR
@@ -1072,6 +1077,7 @@ public class Player : Character, ITrackable
 #endif
         // Todo: For now use this to force ontriggerexit. Need a better way.
         transform.position = new Vector3(1000000, 1000000, 1000000);
+        PlayerDiedAction?.Invoke();
         GetComponent<NetworkObject>().Despawn();
     }
 }
